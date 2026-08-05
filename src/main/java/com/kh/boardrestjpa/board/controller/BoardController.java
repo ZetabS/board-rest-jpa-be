@@ -1,8 +1,10 @@
 package com.kh.boardrestjpa.board.controller;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,8 +26,21 @@ public class BoardController {
     private BoardService boardService;
 
     @GetMapping
-    public List<Board> findAll() {
-        return boardService.findAll();
+    public PagedModel<Board> findAll(Integer page, Integer size) {
+        if (page < 1) {
+            throw new BadRequestException("페이지는 1 이상이어야 합니다.");
+        }
+
+        if (size < 1) {
+            throw new BadRequestException("페이지 크기는 1 이상이어야 합니다.");
+        }
+
+        if (size > 100) {
+            throw new BadRequestException("페이지 크기는 100 이하여야 합니다.");
+        }
+
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by("boardNo").descending());
+        return boardService.findAll(pageable);
     }
 
     @GetMapping("/{id}")

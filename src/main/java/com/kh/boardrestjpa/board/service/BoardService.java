@@ -1,8 +1,8 @@
 package com.kh.boardrestjpa.board.service;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedModel;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,8 +15,8 @@ public class BoardService {
     @Autowired
     private BoardRepository boardRepository;
 
-    public List<Board> findAll() {
-        return boardRepository.findAll();
+    public PagedModel<Board> findAll(Pageable pageable) {
+        return new PagedModel<>(boardRepository.findAll(pageable));
     }
 
     @Transactional
